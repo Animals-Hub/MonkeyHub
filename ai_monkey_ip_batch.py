@@ -104,10 +104,13 @@ def _default_ref() -> str:
 
 
 def _out_name(in_path: Path) -> str:
+    # Replace Pig with Monkey in the filename
+    stem = in_path.stem.replace("猪", "猴")
+    
     ext = in_path.suffix.lower().lstrip(".")
     if ext == "png":
-        return f"{in_path.stem}.png"
-    return f"{in_path.stem}__{ext}.png"
+        return f"{stem}.png"
+    return f"{stem}__{ext}.png"
 
 
 def _build_prompt() -> str:

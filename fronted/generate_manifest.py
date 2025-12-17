@@ -24,12 +24,14 @@ def generate_manifest():
                     # output: "imgs_monkey/filename__jpg.png"
                     
                     input_path = Path(record["input"])
-                    output_path = Path(record["output"])
+                    # Force replacement of 猪 -> 猴 in the output filename stem
+                    # This handles both legacy records and new records
+                    output_stem = Path(record["output"]).stem.replace("猪", "猴")
                     
                     images.append({
-                        "id": output_path.stem,
+                        "id": output_stem,
                         "pig_url": f"/imgs/{input_path.stem}.webp",
-                        "monkey_url": f"/imgs_monkey/{output_path.stem}.webp",
+                        "monkey_url": f"/imgs_monkey/{output_stem}.webp",
                         "original_name": input_path.name
                     })
             except json.JSONDecodeError:
