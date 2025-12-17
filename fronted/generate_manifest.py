@@ -28,8 +28,8 @@ def generate_manifest():
                     
                     images.append({
                         "id": output_path.stem,
-                        "pig_url": f"/imgs/{input_path.name}",
-                        "monkey_url": f"/imgs_monkey/{output_path.name}",
+                        "pig_url": f"/imgs/{input_path.stem}.webp",
+                        "monkey_url": f"/imgs_monkey/{output_path.stem}.webp",
                         "original_name": input_path.name
                     })
             except json.JSONDecodeError:
