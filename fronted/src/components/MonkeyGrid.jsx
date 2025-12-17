@@ -16,16 +16,46 @@ const ImageCard = ({ item }) => {
     e.stopPropagation();
     try {
       const response = await fetch(item.monkey_url);
-      const blob = await response.blob();
+      const inputBlob = await response.blob();
+
+      // Convert to PNG if strictly needed, or just ensure it is PNG for clipboard
+      // Since we know source is WebP, we must convert for WeChat/preview compatibility
+      const pngBlob = await new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(inputBlob);
+
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          canvas.toBlob((blob) => {
+            URL.revokeObjectURL(url);
+            if (blob) resolve(blob);
+            else reject(new Error('Canvas toBlob failed'));
+          }, 'image/png');
+        };
+
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          reject(new Error('Failed to load image for conversion'));
+        };
+
+        img.src = url;
+      });
+
       await navigator.clipboard.write([
         new ClipboardItem({
-          [blob.type]: blob,
+          'image/png': pngBlob,
         }),
       ]);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy content: ', err);
+      // Fallback: try copying original url or blob if conversion fails?
+      // For now, let's keep it simple. If conversion fails, it fails.
     }
   };
 
