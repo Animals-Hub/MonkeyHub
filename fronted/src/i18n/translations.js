@@ -17,7 +17,8 @@ export const translations = {
     thanks_prefix: "特别感谢灵感来源：",
     initializing: "正在初始化神经连接...",
     loading_data: "[数据加载中]",
-    end_archive: "// 归档结束 //"
+    end_archive: "// 归档结束 //",
+    copied: "已复制！"
   },
   en: {
     title: "MonkeyHub",
@@ -37,7 +38,8 @@ export const translations = {
     thanks_prefix: "Special thanks for inspiration: ",
     initializing: "INITIALIZING_NEURAL_LINK...",
     loading_data: "[LOADING_DATA]",
-    end_archive: "// END_OF_ARCHIVE //"
+    end_archive: "// END_OF_ARCHIVE //",
+    copied: "Copied!"
   },
   ja: {
     title: "MonkeyHub",
@@ -57,6 +59,7 @@ export const translations = {
     thanks_prefix: "インスピレーションに感謝：",
     initializing: "ニューラルリンク初期化中...",
     loading_data: "[データ読み込み中]",
-    end_archive: "// アーカイブ終了 //"
+    end_archive: "// アーカイブ終了 //",
+    copied: "コピーしました！"
   }
 };

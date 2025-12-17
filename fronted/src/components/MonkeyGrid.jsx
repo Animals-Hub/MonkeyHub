@@ -11,9 +11,13 @@ const PAGE_SIZE = 24;
 const ImageCard = ({ item }) => {
   const { t } = useLanguage();
   const [copied, setCopied] = useState(false);
+  const [isCopying, setIsCopying] = useState(false);
 
   const handleCopy = async (e) => {
     e.stopPropagation();
+    if (isCopying) return;
+
+    setIsCopying(true);
     try {
       const response = await fetch(item.monkey_url);
       const inputBlob = await response.blob();
@@ -56,6 +60,8 @@ const ImageCard = ({ item }) => {
       console.error('Failed to copy content: ', err);
       // Fallback: try copying original url or blob if conversion fails?
       // For now, let's keep it simple. If conversion fails, it fails.
+    } finally {
+      setIsCopying(false);
     }
   };
 
@@ -102,13 +108,34 @@ const ImageCard = ({ item }) => {
 
           {/* Floaty Actions */}
           <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0 z-30 delay-75">
-            <button
-              onClick={handleCopy}
-              className="p-2.5 rounded-2xl bg-black/40 hover:bg-green-500/20 backdrop-blur-xl text-white border border-white/10 hover:border-green-500/50 transition-all hover:scale-110 active:scale-95 shadow-lg"
-              title={t('copy')}
-            >
-              {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
-            </button>
+            <div className="relative">
+              <AnimatePresence>
+                {copied && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: -50 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-md whitespace-nowrap pointer-events-none"
+                  >
+                    {t('copied') || "Copied!"}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <button
+                onClick={handleCopy}
+                disabled={isCopying}
+                className="p-2.5 rounded-2xl bg-black/40 hover:bg-green-500/20 backdrop-blur-xl text-white border border-white/10 hover:border-green-500/50 transition-all hover:scale-110 active:scale-95 shadow-lg relative"
+                title={t('copy')}
+              >
+                {isCopying ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-yellow-400" />
+                ) : copied ? (
+                  <Check className="w-4 h-4 text-green-400" />
+                ) : (
+                  <Copy className="w-4 h-4" />
+                )}
+              </button>
+            </div>
             <a
               href={item.monkey_url}
               download={item.id}
