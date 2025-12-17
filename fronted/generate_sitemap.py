@@ -7,13 +7,14 @@ from xml.dom import minidom
 # Configuration
 MANIFEST_PATH = Path("public/monkey_manifest.json")
 OUTPUT_FILE = Path("public/sitemap.xml")
-BASE_URL = "https://pighub.top"
+BASE_URL = "https://monkeyhub.icu"
 
 def prettify(elem):
     """Return a pretty-printed XML string for the Element."""
     rough_string = ET.tostring(elem, 'utf-8')
     reparsed = minidom.parseString(rough_string)
-    return reparsed.toprettyxml(indent="  ")
+    # Ensure encoding is specified in the declaration
+    return reparsed.toprettyxml(indent="  ", encoding="UTF-8").decode("utf-8")
 
 def generate_sitemap():
     if not MANIFEST_PATH.exists():

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://pighub.top/sitemap.xml
+Sitemap: https://monkeyhub.icu/sitemap.xml
