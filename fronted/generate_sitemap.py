@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 from datetime import datetime
+from urllib.parse import quote
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
@@ -8,6 +9,20 @@ from xml.dom import minidom
 MANIFEST_PATH = Path("public/monkey_manifest.json")
 OUTPUT_FILE = Path("public/sitemap.xml")
 BASE_URL = "https://monkeyhub.icu"
+
+
+def encode_url_path(path: str) -> str:
+    """
+    URL-encode a path for use in sitemap, encoding non-ASCII characters
+    while preserving path structure (slashes).
+    
+    Example: /imgs_monkey/000032_为猴着迷.webp 
+          -> /imgs_monkey/000032_%E4%B8%BA%E7%8C%B4%E7%9D%80%E8%BF%B7.webp
+    """
+    # Split path into segments, encode each segment, then rejoin
+    segments = path.split('/')
+    encoded_segments = [quote(segment, safe='') for segment in segments]
+    return '/'.join(encoded_segments)
 
 def prettify(elem):
     """Return a pretty-printed XML string for the Element."""
@@ -66,8 +81,9 @@ def generate_sitemap():
         image_element = ET.SubElement(url_element, "image:image")
         
         image_loc = ET.SubElement(image_element, "image:loc")
-        # Ensure the URL is absolute
-        image_loc.text = f"{BASE_URL}{img['monkey_url']}"
+        # Ensure the URL is absolute and properly URL-encoded
+        encoded_path = encode_url_path(img['monkey_url'])
+        image_loc.text = f"{BASE_URL}{encoded_path}"
         
         # Optional: Title (using original name or id)
         if 'original_name' in img:
